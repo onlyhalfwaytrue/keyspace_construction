@@ -12,6 +12,9 @@
 #include <sys/types.h>
 #include <dirent.h>
 
+int numFiles = 0;
+int haveNum = 0;
+
 typedef enum relative_position {BEFORE, AFTER, CLONE} relation;
 
 int is_uppercase (char letter){
@@ -63,37 +66,41 @@ int num_words (char * in_string){
 	return word_count;
 }
 
-char process_letter(char letter){
-	//	Returns lowercase version of the letter and leaves unchanged if not a letter
-	if (is_lowercase(letter) || is_numeric(letter)){
-		return letter;
-	}
-	else if (is_uppercase(letter)){
-		return letter+32;
-	}
-	else{
-		return '-';
-	}
+char process_letter(char letter, char validation){
+    //  Returns lowercase version of the letter and leaves unchanged if not a letter
+    if (is_lowercase(letter) || (is_numeric(letter)&&(is_lowercase(validation)||is_uppercase(validation)))){
+        return letter;
+    }
+    else if (is_uppercase(letter)){
+        return letter+32;
+    }
+    else{
+        return '-';
+    }
 }
 
 char * normalize_string(char * in_string){
-	//	Normalizes input string for separation: turns all non-alphabetical characters
-	//	into the given delimiter for use in strtok operations later in the process.
-	int length,position;
-	length = strlen(in_string);
-	position = 0;
-	
-	char * out_string = malloc(sizeof(char) * length);
-	strcpy(out_string, in_string);
-	
-	while(out_string[position]!=0){
-		out_string[position] = process_letter(out_string[position]);
-		position++;
-	}
-	
-	printf("\n%s\n", out_string);
-	
-	return out_string;
+    //  Normalizes input string for separation: turns all non-alphabetical characters
+    //  into the given delimiter for use in strtok operations later in the process.
+    int length,position;
+    char validation = '-';
+    length = strlen(in_string);
+    position = 0;
+   
+    char * out_string = malloc(sizeof(char) * length);
+    strcpy(out_string, in_string);
+   
+    while(out_string[position]!=0){
+        if(!(is_numeric(out_string[position]))){
+            validation = out_string[position];
+        }
+        out_string[position] = process_letter(out_string[position], validation);
+        position++;
+    }
+   
+    printf("\n%s\n", out_string);
+   
+    return out_string;
 }
 
 char ** separate_string(char * in_string){
@@ -121,7 +128,8 @@ char ** separate_string(char * in_string){
 typedef struct word_node{
 	//	Nodes know the word which they represent and the node which follows in the linked list.
 	char * word;
-	int count;
+	int count [];
+	char *fileName[];
 	struct word_node * prev;
 	struct word_node * next;
 }node_t;
@@ -129,7 +137,8 @@ typedef struct word_node{
 node_t * new_node(char * wordd){
 	node_t * ret_node = malloc(sizeof(node_t));
 	ret_node->word = wordd;
-	ret_node->count = 1;
+	ret_node->count = malloc(sizeof(int)*numFiles);
+	//ret_node->fileName = malloc(sizeof(char)*numFiles);
 	ret_node->prev = NULL;
 	ret_node->next = NULL;
 	return ret_node;
@@ -305,7 +314,7 @@ void export(FILE *file){
       }
       size_t newLen = fread(source, sizeof(char), bufSize, file);
       if(newLen==0){
-        fputs("Error reading file", stderr);
+        fputs("FILE IS EMPTY...", stderr);
       }
       else{
         source[++newLen]= '\0';
@@ -359,13 +368,20 @@ void traverseDir(char *name){
       traverseDir(path);
     }
     else{
-      //file to be opened
-      FILE *fp=NULL;
-      char* filePath=makePath(name, entry->d_name);
-      printf("The file path is %s\n", filePath);
-      fp=fopen(filePath, "r");
-      printf("Exporting %s...\n", entry->d_name);
-      export(fp);
+      //file to be opened or counted
+      if(haveNum==0){
+      	numFiles++;
+      	printf("%d\n", numFiles);
+      	continue;
+      }
+      else if(haveNum==1){
+      	FILE *fp=NULL;
+      	char* filePath=makePath(name, entry->d_name);
+      	printf("The file path is %s\n", filePath);
+      	fp=fopen(filePath, "r");
+     	printf("Exporting %s...\n", entry->d_name);
+      	export(fp);
+      }
     }
   }
   closedir(dir);
@@ -381,6 +397,8 @@ int main(int argc, char *argv[]){
     return 0;
   }
   else{
+    traverseDir(argv[1]);
+    haveNum=1;
     traverseDir(argv[1]);
     }
     return 0;
