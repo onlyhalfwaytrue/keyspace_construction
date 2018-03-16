@@ -16,7 +16,6 @@
 
 int numFiles = 0;
 int haveNum = 0;
-list_t *fileHead = malloc(sizeof(list_t));
 
 typedef enum relative_position {BEFORE, AFTER, CLONE} relation;
 
@@ -33,6 +32,7 @@ typedef struct node_list{
 	//	This was created to make tracking the head of our linked list manageable.
 	node_t * head;
 }list_t;
+list_t *fileHead;
 
 
 int is_uppercase(char letter);
