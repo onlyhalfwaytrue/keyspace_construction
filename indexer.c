@@ -14,6 +14,7 @@
 
 int numFiles = 0;
 int haveNum = 0;
+list_t *fileHead = malloc(sizeof(list_t));
 
 typedef enum relative_position {BEFORE, AFTER, CLONE} relation;
 
@@ -133,6 +134,13 @@ typedef struct word_node{
 	struct word_node * next;
 }node_t;
 
+node_t *file_node(char* wordd){
+	node_t *fileNode = malloc(sizeof(node_t));
+	fileNode->word=wordd;
+	fileNode->count=malloc(sizeof(int));
+	fileNode->prev=NULL;
+	fileNode->next=NULL;
+}
 node_t * new_node(char * wordd){
 	node_t * ret_node = malloc(sizeof(node_t));
 	ret_node->word = wordd;
@@ -199,6 +207,22 @@ relation comes_first(char * new_word, char * old_word){
 		return BEFORE;
 	}
 	return AFTER;
+}
+
+void insertFile(list_t *list, char *file){
+	node_t *new_file=file_node(file);
+	new_file->count[0]=numCount;
+	if(list->head==NULL){
+		list->head=new_file;
+		return;
+	}
+	else{
+		node_t *temp=list->head;
+		while(temp!=NULL){
+			temp=temp->next;
+		}
+		temp=new_file;
+	}
 }
 
 void insert_node(list_t * list, char * wordd, int update_index){
