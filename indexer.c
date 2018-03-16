@@ -6,8 +6,7 @@
 //
 
 #include "indexer.h"
-
-typedef enum relative_position {BEFORE, AFTER, CLONE} relation;
+#include "traverse.c"
 
 int is_uppercase (char letter){
 	//	Tests whether a character is a uppercase letter.
@@ -123,6 +122,7 @@ node_t *file_node(char* wordd){
 	fileNode->count=malloc(sizeof(int));
 	fileNode->prev=NULL;
 	fileNode->next=NULL;
+	return fileNode;
 }
 node_t * new_node(char * wordd){
 	node_t * ret_node = malloc(sizeof(node_t));
@@ -188,7 +188,7 @@ relation comes_first(char * new_word, char * old_word){
 
 void insertFile(list_t *list, char *file){
 	node_t *new_file=file_node(file);
-	new_file->count[0]=numCount;
+	new_file->count[0]=numFiles;
 	if(list->head==NULL){
 		list->head=new_file;
 		return;
@@ -269,7 +269,7 @@ list_t * sort_list (char ** word_array, list_t *use_list, int update_index){
 	return ret_list;
 }
 
-void print_list(list_t * sorted){
+/*void print_list(list_t * sorted){
 	//	Prints input linked list. The list is sorted by the time this function is called,
 	//	this completes our program.
 	node_t * current = sorted->head;
@@ -278,6 +278,26 @@ void print_list(list_t * sorted){
 		current = current->next;
 	}
 	return;
-}
+}*/
+int main (int argc, char *argv[]){
+ /*
+ if (argc<2){
+ printf("You must input at least one string to run this program.\nRun using the format ./stringsorter \"<your input string here>\"\n");
+ return 0;
+ }
+ if(argc>2){
+ printf("No more than one input string allowed at a time.\nRun using the format ./stringsorter \"<your input string here>\"\n");
+ return 0;
+ }
+ 
+ int length = strlen(argv[1]);
+ char * input_string = malloc(sizeof(char)*length);
+ strcpy(input_string,argv[1]);
+ char ** split_words = separate_string(input_string);
+ list_t * sorted = sort_list(split_words);
+ print_list(sorted);*/
+ 
+ return 0;
+ }
 
 
