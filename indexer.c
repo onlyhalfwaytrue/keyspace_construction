@@ -5,16 +5,7 @@
 //  Created by Jaroor Modi and Frederick Lau on 1/24/18.
 //
 
-#include <stdio.h>
-#include <stdlib.h>
-#include <string.h>
-#include <unistd.h>
-#include <sys/types.h>
-#include <dirent.h>
-
-int numFiles = 0;
-int haveNum = 0;
-list_t *fileHead = malloc(sizeof(list_t));
+#include "indexer.h"
 
 typedef enum relative_position {BEFORE, AFTER, CLONE} relation;
 
@@ -126,14 +117,6 @@ char ** separate_string(char * in_string){
 	return word_array;
 }
 
-typedef struct word_node{
-	//	Nodes know the word which they represent and the node which follows in the linked list.
-	char * word;
-	int count [];
-	struct word_node * prev;
-	struct word_node * next;
-}node_t;
-
 node_t *file_node(char* wordd){
 	node_t *fileNode = malloc(sizeof(node_t));
 	fileNode->word=wordd;
@@ -149,12 +132,6 @@ node_t * new_node(char * wordd){
 	ret_node->next = NULL;
 	return ret_node;
 }
-
-typedef struct node_list{
-	//	This is the "list" structure which is the primary structure which the functions below work with.
-	//	This was created to make tracking the head of our linked list manageable.
-	node_t * head;
-}list_t;
 
 relation comes_first(char * new_word, char * old_word){
 	//	Returns 1 if new_word sorts before old_word, 0 otherwise. Used in the insert_node function
@@ -303,131 +280,4 @@ void print_list(list_t * sorted){
 	return;
 }
 
-//function that does exactly what snprintf does because why not
-char* makePath(char* s1, char* s2){
-  int len = strlen(s1) + strlen(s2);
-  char* temp=(char*)malloc(len*sizeof(char)+2);
-  int i;
-  int j;
-  for(i=0; i<strlen(s1); i++){
-    temp[i]=s1[i];
-  }
-  temp[i]='/';
-  for(j=0; j<strlen(s2); j++){
-    i++;
-    temp[i]=s2[j];
-  }
-  i++;
-  temp[i]='\0';
-  //printf("%s\n", temp);
-  return temp;
-}
 
-//function to take entire content of file, whitespaces and all, and put it into an array
-//to be parsed
-void export(FILE *file){
-  printf("In export..\n");
-  char *source = NULL;
-  if (file != NULL){
-    if(fseek(file, 0L, SEEK_END)==0){
-      long bufSize=ftell(file);
-      if(bufSize==-1){
-        printf("Error reading file size, exiting...");
-        return;
-      }
-      source=malloc(sizeof(char)*(bufSize+1));
-      if(fseek(file, 0L, SEEK_SET)!=0){
-        printf("Some error...exiting...");
-        return;
-      }
-      size_t newLen = fread(source, sizeof(char), bufSize, file);
-      if(newLen==0){
-        fputs("FILE IS EMPTY...", stderr);
-      }
-      else{
-        source[++newLen]= '\0';
-      }
-    }
-  }
-  //printf("%s\n", source);
-  char ** split_words = separate_string(source);
-  list_t* sorted = sort_list(split_words);
-  print_list(sorted);
-}
-
-/*int main (int argc, char *argv[]){
-
-
-	if (argc<2){
-		printf("You must input at least one string to run this program.\nRun using the format ./stringsorter \"<your input string here>\"\n");
-		return 0;
-	}
-	if(argc>2){
-		printf("No more than one input string allowed at a time.\nRun using the format ./stringsorter \"<your input string here>\"\n");
-		return 0;
-	}
-	
-	int length = strlen(argv[1]);
-	char * input_string = malloc(sizeof(char)*length);
-	strcpy(input_string,argv[1]);
-	char ** split_words = separate_string(input_string);
-	list_t * sorted = sort_list(split_words);
-	print_list(sorted);
-	
-	return 0;
-}*/
-
-//function to traverse directory to access all subdirectories
-void traverseDir(char *name){
-  DIR *dir;
-  struct dirent *entry;
-  if (!(dir=opendir(name))){
-    printf("Failed to open directory... exiting\n");
-    return;
-  }
-  while ((entry=readdir(dir))!= NULL){
-    if(entry->d_type==DT_DIR){
-      char path[1024];
-      if(strcmp(entry->d_name, ".")==0 || strcmp(entry->d_name, "..")==0){
-        continue;
-      }
-      //subdirectory to recursively traverse
-      snprintf(path, sizeof(path), "%s/%s", name, entry->d_name);;
-      traverseDir(path);
-    }
-    else{
-      //file to be opened or counted
-      if(haveNum==0){
-      	numFiles++;
-      	printf("%d\n", numFiles);
-      	continue;
-      }
-      else if(haveNum==1){
-      	FILE *fp=NULL;
-      	char* filePath=makePath(name, entry->d_name);
-      	printf("The file path is %s\n", filePath);
-      	fp=fopen(filePath, "r");
-     	printf("Exporting %s...\n", entry->d_name);
-      	export(fp);
-      }
-    }
-  }
-  closedir(dir);
-}
-
-int main(int argc, char *argv[]){
-  if(argc<2){
-    printf("Too few arguments, exiting...");
-    return 0;
-  }
-  else if(argc>2){
-    printf("Too many arguments, exiting...");
-    return 0;
-  }
-  else{
-    traverseDir(argv[1]);
-    haveNum=1;
-    traverseDir(argv[1]);
-    }
-    return 0;
-}
