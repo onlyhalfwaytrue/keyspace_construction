@@ -129,7 +129,6 @@ typedef struct word_node{
 	//	Nodes know the word which they represent and the node which follows in the linked list.
 	char * word;
 	int count [];
-	char *fileName[];
 	struct word_node * prev;
 	struct word_node * next;
 }node_t;
@@ -137,8 +136,7 @@ typedef struct word_node{
 node_t * new_node(char * wordd){
 	node_t * ret_node = malloc(sizeof(node_t));
 	ret_node->word = wordd;
-	ret_node->count = malloc(sizeof(int)*numFiles);
-	//ret_node->fileName = malloc(sizeof(char)*numFiles);
+	ret_node->count = (int *) calloc(numFiles, sizeof(int));
 	ret_node->prev = NULL;
 	ret_node->next = NULL;
 	return ret_node;
@@ -203,7 +201,7 @@ relation comes_first(char * new_word, char * old_word){
 	return AFTER;
 }
 
-void insert_node(list_t * list, char * wordd){
+void insert_node(list_t * list, char * wordd, int update_index){
 	//	Inserts nodes into our linked list structure but in the proper, sorted order using the
 	//	comes_first comparison function to find the word's relative position in the list.
 	node_t * new_word = new_node(wordd);
@@ -215,7 +213,7 @@ void insert_node(list_t * list, char * wordd){
 	node_t * current = list->head;
 	while (current!=NULL){
 		if(comes_first(new_word->word, current->word) == CLONE){
-			current->count += 1;
+			current->count[update_index] += 1;
 			free(new_word);
 			return;
 		}
@@ -251,14 +249,20 @@ void insert_node(list_t * list, char * wordd){
 	return;
 }
 
-list_t * sort_list (char ** word_array){
+list_t * sort_list (char ** word_array, list_t *use_list, int update_index){
 	//	Creates an empty list and inserts nodes using the insert_node function defined above. This
 	//	results in a linked list with the nodes such that the words they contain are sorted from head to tail.
-	list_t * ret_list = malloc(sizeof(list_t));
-	ret_list->head = NULL;
+	list_t * ret_list;
+	if (use_list == NULL){
+		ret_list = malloc(sizeof(list_t));
+		ret_list->head = NULL;
+	}
+	else{
+		ret_list = use_list;
+	}
 	int position = 0;
 	while(word_array[position]!=0){
-		insert_node(ret_list, word_array[position]);
+		insert_node(ret_list, word_array[position], update_index);
 		position++;
 	}
 	return ret_list;
