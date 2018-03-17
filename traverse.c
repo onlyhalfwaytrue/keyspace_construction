@@ -1,5 +1,8 @@
 #include "indexer.h"
 
+int numFiles = 0;
+int haveNum = 0;
+file_t * filelist = NULL;
 
 //function that does exactly what snprintf does because why not
 char* makePath(char* s1, char* s2){
@@ -19,6 +22,25 @@ char* makePath(char* s1, char* s2){
 	temp[i]='\0';
 	//printf("%s\n", temp);
 	return temp;
+}
+
+//inserts new file nodes for the global file list variable;
+void insert_file(char * name){
+	file_t * newfile = (file_t *) malloc(sizeof(file_t));
+	newfile->filename = name;
+	newfile->seqnum = numFiles;
+	newfile->next = NULL;
+	
+	if (filelist==NULL){
+		filelist= newfile;
+	}
+	else{
+		file_t * temp = filelist;
+		while(temp->next != NULL){
+			temp = temp->next;
+		}
+		temp->next = newfile;
+	}
 }
 
 //function to take entire content of file, whitespaces and all, and put it into an array
@@ -47,10 +69,9 @@ void export(FILE *file){
 			}
 		}
 	}
-	//printf("%s\n", source);
+	printf("%s\n", source);
 	char ** split_words = separate_string(source);
-	list_t *inverted_index = NULL;
-	inverted_index = sort_list(split_words, inverted_index, 0);
+	sort_list(split_words, 0);
 	print_list(inverted_index);
 }
 
@@ -97,7 +118,11 @@ void traverseDir(char *name){
 		else{
 			//file to be opened or counted
 			if(haveNum==0){
+				insert_file(entry->d_name);
+				
+				
 				numFiles++;
+				
 				printf("%d\n", numFiles);
 				continue;
 			}

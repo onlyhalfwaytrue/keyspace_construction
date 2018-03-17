@@ -6,7 +6,9 @@
 //
 
 #include "indexer.h"
-#include "traverse.c"
+//#include "traverse.c"
+
+list_t * inverted_index = NULL;
 
 int is_uppercase (char letter){
 	//	Tests whether a character is a uppercase letter.
@@ -89,7 +91,7 @@ char * normalize_string(char * in_string){
         position++;
     }
    
-    printf("\n%s\n", out_string);
+    //printf("\n%s\n", out_string);
    
     return out_string;
 }
@@ -100,7 +102,7 @@ char ** separate_string(char * in_string){
 	//	English alphabet.
 	int word_count, position;
 	word_count = num_words(in_string);
-	printf("\nWORD COUNT:   %d\n", word_count);
+	//	printf("\nWORD COUNT:   %d\n", word_count);
 	position = 0;
 	char * interim = normalize_string(in_string);
 	char ** word_array = malloc(sizeof(char*) * (word_count + 1));
@@ -116,16 +118,16 @@ char ** separate_string(char * in_string){
 	return word_array;
 }
 
-node_t *file_node(char* wordd){
+/*node_t *file_node(char* wordd){
 	node_t *fileNode = malloc(sizeof(node_t));
 	fileNode->word=wordd;
 	fileNode->count=malloc(sizeof(int));
 	fileNode->prev=NULL;
 	fileNode->next=NULL;
 	return fileNode;
-}
+}*/
 node_t * new_node(char * wordd){
-	node_t * ret_node = malloc(sizeof(node_t));
+	node_t * ret_node = (node_t *) malloc(sizeof(node_t));
 	ret_node->word = wordd;
 	ret_node->count = (int *) calloc(numFiles, sizeof(int));
 	ret_node->prev = NULL;
@@ -186,7 +188,7 @@ relation comes_first(char * new_word, char * old_word){
 	return AFTER;
 }
 
-void insertFile(list_t *list, char *file){
+/*void insertFile(list_t *list, char *file){
 	node_t *new_file=file_node(file);
 	new_file->count[0]=numFiles;
 	if(list->head==NULL){
@@ -200,7 +202,7 @@ void insertFile(list_t *list, char *file){
 		}
 		temp=new_file;
 	}
-}
+}*/
 
 void insert_node(list_t * list, char * wordd, int update_index){
 	//	Inserts nodes into our linked list structure but in the proper, sorted order using the
@@ -250,23 +252,19 @@ void insert_node(list_t * list, char * wordd, int update_index){
 	return;
 }
 
-list_t * sort_list (char ** word_array, list_t *use_list, int update_index){
+void sort_list (char ** word_array, int update_index){
 	//	Creates an empty list and inserts nodes using the insert_node function defined above. This
 	//	results in a linked list with the nodes such that the words they contain are sorted from head to tail.
-	list_t * ret_list;
-	if (use_list == NULL){
-		ret_list = malloc(sizeof(list_t));
-		ret_list->head = NULL;
-	}
-	else{
-		ret_list = use_list;
+	if (inverted_index == NULL){
+		inverted_index = malloc(sizeof(list_t));
+		inverted_index->head = NULL;
 	}
 	int position = 0;
 	while(word_array[position]!=0){
-		insert_node(ret_list, word_array[position], update_index);
+		insert_node(inverted_index, word_array[position], update_index);
 		position++;
 	}
-	return ret_list;
+	return;
 }
 
 void print_list(list_t * sorted){
