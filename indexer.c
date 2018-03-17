@@ -269,18 +269,19 @@ list_t * sort_list (char ** word_array, list_t *use_list, int update_index){
 	return ret_list;
 }
 
-/*void print_list(list_t * sorted){
+void print_list(list_t * sorted){
 	//	Prints input linked list. The list is sorted by the time this function is called,
 	//	this completes our program.
 	node_t * current = sorted->head;
 	while(current != NULL){
-		printf("%s, %d\n",current->word, current->count);
+		printf("%s, %d\n",current->word, current->count[0]);
 		current = current->next;
 	}
 	return;
-}*/
-int main (int argc, char *argv[]){
- /*
+}
+
+/*int main (int argc, char *argv[]){
+
  if (argc<2){
  printf("You must input at least one string to run this program.\nRun using the format ./stringsorter \"<your input string here>\"\n");
  return 0;
@@ -295,9 +296,9 @@ int main (int argc, char *argv[]){
  strcpy(input_string,argv[1]);
  char ** split_words = separate_string(input_string);
  list_t * sorted = sort_list(split_words);
- print_list(sorted);*/
+ print_list(sorted);
  
  return 0;
- }
+ }*/
 
 

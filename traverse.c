@@ -49,8 +49,9 @@ void export(FILE *file){
 	}
 	//printf("%s\n", source);
 	char ** split_words = separate_string(source);
-	list_t* sorted = sort_list(split_words);
-	print_list(sorted);
+	list_t *inverted_index = NULL;
+	inverted_index = sort_list(split_words, inverted_index, 0);
+	print_list(inverted_index);
 }
 
 /*int main (int argc, char *argv[]){
