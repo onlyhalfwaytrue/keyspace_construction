@@ -102,7 +102,7 @@ void traverseDir(char *name){
 		else{
 			//file to be opened or counted
 			if(haveNum==0){
-				printf("Inserting %s to filelist\n", entry->d_name);
+				//printf("Inserting %s to filelist\n", entry->d_name);
 				//insert_file(&filelist, entry->d_name);
 				file_t * newfile=malloc(sizeof(file_t));
 				newfile->filename=entry->d_name;
@@ -133,7 +133,7 @@ void traverseDir(char *name){
 				char* filePath=makePath(name, entry->d_name);
 				//printf("The file path is %s\n", filePath);
 				fp=fopen(filePath, "r");
-				printf("Exporting %s...\n", entry->d_name);
+				//printf("Exporting %s...\n", entry->d_name);
 				//printf("%d\n", globalIndex);
 				exportFile(fp);
 				globalIndex++;
