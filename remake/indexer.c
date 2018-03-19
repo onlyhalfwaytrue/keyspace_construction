@@ -10,6 +10,8 @@
 #include <stdlib.h>
 #include "traverse.c"
 
+
+
 int main(int argc, char *argv[]){
 	if(argc<2){
 		printf("Too few arguments, exiting...");
@@ -24,6 +26,8 @@ int main(int argc, char *argv[]){
 		haveNum=1;
 		traverseDir(argv[1]);
 	}
+	free(filelist);
+	free(inverted_index);
 	return 0;
 }
 

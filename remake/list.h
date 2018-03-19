@@ -26,6 +26,6 @@ node_t * new_node(char * wordd);
 relation comes_first(char * new_word, char * old_word);
 void insert_node(list_t * list, char * wordd, int update_index);
 void sort_list (char ** word_array, int update_index);
-void print_list(list_t * sorted, file_t * file_list);
+void print_list(list_t * sorted, file_t * theList);
 
 #endif

@@ -28,30 +28,28 @@ char* makePath(char* s1, char* s2){
 }
 
 //inserts new file nodes for the global file list variable;
-void insert_file(char * name){
-	//printf("Inserting file %s\n", name);
-	file_t * newfile = (file_t *) malloc(sizeof(file_t));
-	newfile->filename = name;
-	newfile->seqnum = numFiles;
-	newfile->next = NULL;
-	
-	if (filelist==NULL){
-		filelist= newfile;
-		//printf("File %s inserted!\n", newfile->filename);
+/*void insert_file(file_t ** head, char * name){
+	file_t *newNode=(file_t*)malloc(sizeof(file_t));
+	newNode->filename=name;
+	newNode->next=NULL;
+	//check to see if we have an empty list, if we do, simply assign the new node as the head node
+	if(*head==NULL){
+		*head=newNode;
 		return;
-	}
-	else{
-		file_t * temp = filelist;
-		while(temp->next!= NULL){
-			temp=temp->next;
-			//printf("Current file is %s\n", temp->filename);
-			//printf("%d\n", i);
 		}
-		temp->next=newfile;
-		//printf("File %s inserted!\n", newfile->filename);
-	}
-}
-
+	else{
+	//not an empty list, need two nodes to traverse so we can find the correct place to insert new node
+		file_t *curr=*head;
+		//node_t *prev=NULL;
+		while(curr->next!=NULL){
+			//prev=curr;
+			//printf("%s\n", curr->filename);
+			curr=curr->next;	
+			}
+		curr->next=newNode;
+		printf("%p %s\n", &newNode, newNode->filename);
+		}
+}*/
 //function to take entire content of file, whitespaces and all, and put it into an array
 //to be parsed
 void exportFile(FILE *file){
@@ -79,9 +77,6 @@ void exportFile(FILE *file){
 		}
 	}
 	char ** split_words = separate_string(source);
-	/*while(*split_words){
-		printf("1 %s\n", *split_words++);
-	}*/
 	sort_list(split_words, globalIndex);
 	print_list(inverted_index, filelist);
 }
@@ -107,12 +102,33 @@ void traverseDir(char *name){
 		else{
 			//file to be opened or counted
 			if(haveNum==0){
-				insert_file(entry->d_name);
-				//printf("%d\n", numFiles);
+				printf("Inserting %s to filelist\n", entry->d_name);
+				//insert_file(&filelist, entry->d_name);
+				file_t * newfile=malloc(sizeof(file_t));
+				newfile->filename=entry->d_name;
+				newfile->next=NULL;
+				if(filelist==NULL){
+					filelist=newfile;
+
+				}
+				else if(filelist->next==NULL){
+					filelist->next=newfile;
+				}
+				else{
+					file_t * temp=filelist;
+					while(temp->next!=NULL){
+						temp=temp->next;
+					}
+					temp->next=newfile;
+				}
 				numFiles++;
 				continue;
 			}
 			else if(haveNum==1){
+				if(strcmp(entry->d_name, ".DS_Store")==0){
+					globalIndex++;
+					continue;
+				}
 				FILE *fp=NULL;
 				char* filePath=makePath(name, entry->d_name);
 				//printf("The file path is %s\n", filePath);

@@ -173,23 +173,27 @@ void sort_list (char ** word_array, int update_index){
 	}
 	return;
 }
-
-void print_list(list_t * sorted, file_t * file_list){
+void print_list(list_t * sorted, file_t * theList){
 	//	Prints input linked list. The list is sorted by the time this function is called,
 	//	this completes our program.
 	node_t * temp;
-	file_t * file;
+	file_t * file = theList;
 	int i;
 	for(temp=sorted->head; temp!=NULL; temp=temp->next){
-		printf("Token is %s\n", temp->word);
-		for(i=0; i<numFiles; i++){
-			printf("Count is %d\n", temp->count[i]);
+		file=theList;
+		i=0;
+		while(file!=NULL){
+			if(temp->count[i]==0){
+				i++;
+				file=file->next;
+				continue;
+			}
+			else{
+				printf("Token %s occurs %d times in file %s\n", temp->word, temp->count[i], file->filename);
+				i++;
+				file=file->next;
+				continue;
+			}
 		}
 	}
-
-	for(file=file_list; file!=NULL; file=file->next){
-		printf("File is %s\n", file->filename);
-	}
-
-	
 }
