@@ -29,6 +29,7 @@ char* makePath(char* s1, char* s2){
 
 //inserts new file nodes for the global file list variable;
 void insert_file(char * name){
+	//printf("Inserting file %s\n", name);
 	file_t * newfile = (file_t *) malloc(sizeof(file_t));
 	newfile->filename = name;
 	newfile->seqnum = numFiles;
@@ -36,13 +37,18 @@ void insert_file(char * name){
 	
 	if (filelist==NULL){
 		filelist= newfile;
+		//printf("File %s inserted!\n", newfile->filename);
+		return;
 	}
 	else{
 		file_t * temp = filelist;
-		while(temp->next != NULL){
-			temp = temp->next;
+		while(temp->next!= NULL){
+			temp=temp->next;
+			//printf("Current file is %s\n", temp->filename);
+			//printf("%d\n", i);
 		}
-		temp->next = newfile;
+		temp->next=newfile;
+		//printf("File %s inserted!\n", newfile->filename);
 	}
 }
 
@@ -65,7 +71,7 @@ void exportFile(FILE *file){
 			}
 			size_t newLen = fread(source, sizeof(char), bufSize, file);
 			if(newLen==0){
-				fputs("FILE IS EMPTY...", stderr);
+				fputs("FILE IS EMPTY...\n", stderr);
 			}
 			else{
 				source[++newLen]= '\0';
@@ -75,7 +81,7 @@ void exportFile(FILE *file){
 	//printf("%s\n", source);
 	char ** split_words = separate_string(source);
 	sort_list(split_words, globalIndex);
-	print_list(inverted_index);
+	print_list(inverted_index, filelist);
 }
 
 //function to traverse directory to access all subdirectories
@@ -109,7 +115,7 @@ void traverseDir(char *name){
 				char* filePath=makePath(name, entry->d_name);
 				//printf("The file path is %s\n", filePath);
 				fp=fopen(filePath, "r");
-				//printf("Exporting %s...\n", entry->d_name);
+				printf("Exporting %s...\n", entry->d_name);
 				//printf("%d\n", globalIndex);
 				exportFile(fp);
 				globalIndex++;
