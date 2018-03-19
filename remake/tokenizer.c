@@ -93,7 +93,7 @@ char ** separate_string(char * in_string){
 	//	English alphabet.
 	int word_count, position;
 	word_count = num_words(in_string);
-	//	printf("\nWORD COUNT:   %d\n", word_count);
+	//printf("\nWORD COUNT:   %d\n", word_count);
 	position = 0;
 	char * interim = normalize_string(in_string);
 	char ** word_array = malloc(sizeof(char*) * (word_count + 1));
@@ -105,6 +105,8 @@ char ** separate_string(char * in_string){
 	}
 	
 	*(word_array + word_count) = 0;
-	
+	/*while(*word_array){
+		printf("2 %s\n", *word_array++);
+	}*/
 	return word_array;
 }

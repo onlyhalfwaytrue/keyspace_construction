@@ -78,8 +78,10 @@ void exportFile(FILE *file){
 			}
 		}
 	}
-	//printf("%s\n", source);
 	char ** split_words = separate_string(source);
+	/*while(*split_words){
+		printf("1 %s\n", *split_words++);
+	}*/
 	sort_list(split_words, globalIndex);
 	print_list(inverted_index, filelist);
 }
