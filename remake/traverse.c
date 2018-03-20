@@ -54,6 +54,10 @@ char* makePath(char* s1, char* s2){
 //to be parsed
 void exportFile(FILE *file){
 	//printf("In export..\n");
+	if (file==NULL){
+		printf("Subdirectory... continuing\n");
+		return;
+	}
 	char *source = NULL;
 	if (file != NULL){
 		if(fseek(file, 0L, SEEK_END)==0){

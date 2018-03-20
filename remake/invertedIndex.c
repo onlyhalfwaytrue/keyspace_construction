@@ -1,8 +1,8 @@
 //
-//  indexer.c
+//  invertedIndex
 //
 //
-//  Created by Jaroor Modi and Frederick Lau on 1/24/18.
+//  Created by Jaroor Modi and Frederick Lau
 //
 
 #include <string.h>
@@ -12,14 +12,6 @@
 #include <sys/stat.h>
 #include <unistd.h>
 #include "traverse.c"
-
-/*typedef struct output_list{
-	char * file;
-	int count;
-	struct outputList * next;
-}out_t;*/
-
-//out_t *outList=NULL;
 
 void finalList(){
 	node_t * temp;
@@ -78,51 +70,54 @@ int is_regular_file(const char *path){
     return S_ISREG(path_stat.st_mode);
 }
 
-/*void makeOutput(char * outputfile){
-	FILE *output=fopen(outputfile, "w");
+void makeOutput(char * outputfile){
+	FILE *output=freopen(outputfile, "w", stdout);
 	fprintf(output, "%s\n", "<? xml version=\"1.0\" encoding=\"UTF-8\"?>");
 	fprintf(output, "%s\n", "<fileIndex>");
-}*/
+	node_t * temp=inverted_index->head;
+	out_t * tOut;
+	while(temp!=NULL){
+		printf("\t<word text=\"%s\">\n", temp->word);
+		tOut=temp->ptr;
+		while(tOut!=NULL){
+			printf("\t\t<file name=\"%s\">%d</file>\n", tOut->file, tOut->count);
+			tOut=tOut->next;
+		}
+		printf("\t</word>\n");
+		temp=temp->next;
+	}
+	fprintf(output, "%s\n", "</fileIndex>");
+}
 
 int main(int argc, char *argv[]){
 	//printf("%p\n", &outList);
-	if(argc<2){
+	if(argc<3){
 		printf("Too few arguments, exiting...\n");
 		return 0;
 	}
-	else if(argc>2){
+	else if(argc>3){
 		printf("Too many arguments, exiting...\n");
 		return 0;
 	}
 	else{
-		if(is_regular_file(argv[1])){
-			FILE *p=fopen(argv[1], "r");
+		if(is_regular_file(argv[2])){
+			FILE *p=fopen(argv[2], "r");
 			if(p!=NULL){
 				file_t * newfile = malloc(sizeof(file_t));
-				newfile->filename=argv[1];
+				newfile->filename=argv[2];
 				newfile->next=NULL;
 				filelist=newfile;
 				exportFile(p);
 			}
 		}
 		else{
-			traverseDir(argv[1]);
+			traverseDir(argv[2]);
 			haveNum=1;
-			traverseDir(argv[1]);
+			traverseDir(argv[2]);
 		}
 	}
 	finalList();
-	node_t * temp=inverted_index->head;
-	out_t * tOut;
-	while(temp!=NULL){
-		tOut=temp->ptr;
-		while(tOut!=NULL){
-			printf("Token %s occurs %d times in %s\n", temp->word, tOut->count, tOut->file);
-			tOut=tOut->next;
-		}
-		temp=temp->next;
-	}
-	//makeOutput(argv[1]);
+	makeOutput(argv[1]);
 	free(filelist);
 	free(inverted_index);
 	return 0;

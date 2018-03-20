@@ -10,6 +10,7 @@ node_t * new_node(char * wordd){
 	for(i=0; i<globalIndex; i++){
 		ret_node->count[i]=0;
 	}
+	ret_node->ptr=NULL;
 	ret_node->prev = NULL;
 	ret_node->next = NULL;
 	return ret_node;
@@ -112,50 +113,6 @@ void insert_node(list_t * list, char * wordd, int update_index){
 		prev->next=new_word;
 		}
 	}
-
-	//if we get here we know we did not find a match or inserted anywhere in the list
-	/*if(list->head == NULL){
-		//printf("Inserted new head: %s\n", new_word->word);
-		list->head = new_word;
-		return;
-	}
-	node_t * current = list->head;
-	while (current!=NULL){
-		if(comes_first(new_word->word, current->word) == CLONE){
-			current->count[update_index]++;
-			free(new_word);
-			return;
-		}
-		current = current->next;
-	}
-	current = list->head;
-	while (current->next!=NULL){
-		switch(comes_first(new_word->word, current->word)){
-			case BEFORE:
-				//printf("\n placed %s BEFORE %s\n", new_word->word, current->word);
-				if (current->prev == NULL){
-					//printf("inserted new head: %s\n", new_word->word);
-					new_word->next = current;
-					current->prev = new_word;
-					new_word->prev = NULL;
-					list->head = new_word;
-					return;
-				}
-				new_word->prev = current->prev;
-				current->prev->next = new_word;
-				new_word->next = current;
-				current->prev = new_word;
-				return;
-			case CLONE:
-			case AFTER:
-				break;
-		}
-		current = current->next;
-	}
-	//add to end if it doesn't come before any of the words in the list
-	current->next = new_word;
-	new_word->prev = current;
-	return;*/
 }
 
 void sort_list (char ** word_array, int update_index){
