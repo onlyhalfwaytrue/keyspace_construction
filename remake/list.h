@@ -6,10 +6,17 @@
 
 typedef enum relative_position {BEFORE, AFTER, CLONE} relation;
 
+typedef struct output_list{
+	char * file;
+	int count;
+	struct output_list * next;
+}out_t;
+
 typedef struct word_node{
 	//	Nodes know the word which they represent and the node which follows in the linked list.
 	char * word;
 	int * count;
+	struct output_list * ptr;
 	struct word_node * prev;
 	struct word_node * next;
 }node_t;
