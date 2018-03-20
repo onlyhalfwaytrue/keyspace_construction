@@ -14,4 +14,8 @@ in each file.  Once we have indexed and counted all tokens, we build a final out
 list with an added field in each token node to point to another list that contains ONLY the files that that token occurs in
 and the count.  This list is built in the invertedIndexer.c file and it is built in proper order with the counts being
 ordered from highest to lowest.  Finally we make our output file according to the proper format outlined in the assignment
-description.  
+description.
+
+4) We need a makefile
+
+We compile the program with gcc -g -Wall invertedIndex.c -o invertedIndex
