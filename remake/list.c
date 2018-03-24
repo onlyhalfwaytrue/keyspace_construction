@@ -73,46 +73,57 @@ void insert_node(list_t * list, char * wordd, int update_index){
 	//	Inserts nodes into our linked list structure but in the proper, sorted order using the
 	//	comes_first comparison function to find the word's relative position in the list.
 	node_t * new_word = new_node(wordd);
+	new_word->count[update_index]++;
 	//new_word->count[update_index]++;
-	//printf("First check %d\n", new_word->count[1]);
+//	printf("First check %d\n", new_word->count[1]);
 	if(list->head==NULL){
-		new_word->count[update_index]++;
 		//printf("%d\n", new_word->count[1]);
 		list->head=new_word;
 		return;
 	}
-	node_t * curr=list->head;
-	node_t * prev=NULL;
-	int didFind=0;
-	while(curr!=NULL){
-		//printf("%s %s\n", curr->word, wordd);
-		if(strcmp(curr->word, wordd)>=0){
-			if(strcmp(curr->word, wordd)==0){
-				curr->count[update_index]++;
-				//printf("%d\n", curr->count[1]);
-				//printf("Global Index is %d, Index ix %d and count is %d\n", globalIndex, update_index, curr->count[update_index]);
-				didFind=1;
+	node_t * current=list->head;
+	
+	while (current!=NULL){
+		if(comes_first(new_word->word, current->word) == CLONE){
+			current->count[update_index]++;
+			free(new_word);
+			return;
+		}
+		current = current->next;
+	}
+	
+	current = list->head;
+	while (current->next!=NULL){
+		
+		if(comes_first(new_word->word, current->word) == BEFORE){
+			//printf("\n placed %s BEFORE %s\n", new_word->word, current->word);
+			if (current->prev == NULL){
+				//printf("inserted new head: %s\n", new_word->word);
+				new_word->next = current;
+				current->prev = new_word;
+				new_word->prev = NULL;
+				list->head = new_word;
 				return;
 			}
+			new_word->prev = current->prev;
+			current->prev->next = new_word;
+			new_word->next = current;
+			current->prev = new_word;
+			return;
 		}
-		else{
-			prev=curr;
-			curr=curr->next;
-		}
-
+		current = current->next;
 	}
-	if(didFind==0){
-		new_word->count[update_index]++;
-		//printf("%d\n", new_word->count[1]);
-		if(curr==list->head){
-		new_word->next=curr;
-		list->head=new_word;
-		}
-		else{
-		new_word->next=curr;
-		prev->next=new_word;
-		}
+	if(comes_first(new_word->word, current->word) == BEFORE){//before tail
+		new_word->prev = current->prev;
+		current->prev->next = new_word;
+		new_word->next = current;
+		current->prev = new_word;
+		return;
 	}
+	//printf("\n placed %s AFTER %s\n", new_word->word, current->word);//after tail
+	current->next = new_word;
+	new_word->prev = current;
+	new_word->next = NULL;
 }
 
 void sort_list (char ** word_array, int update_index){
@@ -124,7 +135,7 @@ void sort_list (char ** word_array, int update_index){
 	}
 	int position = 0;
 	while(word_array[position]!=0){
-		//printf("list %s\n", word_array[position]);
+//		printf("list %s index %d\n", word_array[position], update_index);
 		insert_node(inverted_index, word_array[position], update_index);
 		position++;
 	}
@@ -133,6 +144,7 @@ void sort_list (char ** word_array, int update_index){
 void print_list(list_t * sorted, file_t * theList){
 	//	Prints input linked list. The list is sorted by the time this function is called,
 	//	this completes our program.
+	printf("PRINTLIST CALL");
 	node_t * temp;
 	file_t * file = theList;
 	int i;
@@ -143,13 +155,13 @@ void print_list(list_t * sorted, file_t * theList){
 			if(temp->count[i]==0){
 				i++;
 				file=file->next;
-				continue;
+				//continue;
 			}
 			else{
 				printf("Token %s occurs %d times in file %s\n", temp->word, temp->count[i], file->filename);
 				i++;
 				file=file->next;
-				continue;
+				//continue;
 			}
 		}
 	}

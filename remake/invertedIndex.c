@@ -71,9 +71,10 @@ int is_regular_file(const char *path){
 }
 
 void makeOutput(char * outputfile){
-	FILE *output=freopen(outputfile, "w", stdout);
-	fprintf(output, "%s\n", "<? xml version=\"1.0\" encoding=\"UTF-8\"?>");
-	fprintf(output, "%s\n", "<fileIndex>");
+	FILE *output;
+	output=freopen(outputfile, "w", stdout);
+	printf("%s\n", "<? xml version=\"1.0\" encoding=\"UTF-8\"?>");
+	printf("%s\n", "<fileIndex>");
 	node_t * temp=inverted_index->head;
 	out_t * tOut;
 	while(temp!=NULL){
@@ -86,7 +87,7 @@ void makeOutput(char * outputfile){
 		printf("\t</word>\n");
 		temp=temp->next;
 	}
-	fprintf(output, "%s\n", "</fileIndex>");
+	printf("%s\n", "</fileIndex>");
 }
 
 int main(int argc, char *argv[]){
@@ -114,6 +115,7 @@ int main(int argc, char *argv[]){
 			traverseDir(argv[2]);
 			haveNum=1;
 			traverseDir(argv[2]);
+			printf("Completed second traverseDir\n");
 		}
 	}
 	finalList();

@@ -80,9 +80,13 @@ void exportFile(FILE *file){
 			}
 		}
 	}
+	//printf("EXPORTED FILE %d\n", globalIndex);
 	char ** split_words = separate_string(source);
+	//printf("NOT STUCK 1\n");
 	sort_list(split_words, globalIndex);
+	//printf("NOT STUCK 2\n");
 	print_list(inverted_index, filelist);
+	//printf("NOT STUCK 3\n");
 }
 
 //function to traverse directory to access all subdirectories
@@ -113,10 +117,12 @@ void traverseDir(char *name){
 				newfile->next=NULL;
 				if(filelist==NULL){
 					filelist=newfile;
+					//printf("Added File %s in first traversal\n", newfile->filename);
 
 				}
 				else if(filelist->next==NULL){
 					filelist->next=newfile;
+					//printf("Added File %s in first traversal\n", newfile->filename);
 				}
 				else{
 					file_t * temp=filelist;
@@ -124,6 +130,7 @@ void traverseDir(char *name){
 						temp=temp->next;
 					}
 					temp->next=newfile;
+					//printf("Added File %s in first traversal\n", newfile->filename);
 				}
 				numFiles++;
 				continue;
