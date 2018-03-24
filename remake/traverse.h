@@ -14,7 +14,7 @@ extern int globalIndex;
 typedef struct file_node{
 	//	These nodes just hold names of files and their sequence number to associate word counts with
 	char * filename;
-	//int seqnum;
+	int seqnum;
 	struct file_node * next;
 } file_t;
 
@@ -22,7 +22,7 @@ extern file_t * filelist;
 
 char* makePath(char* s1, char* s2);
 //void insert_file(file_t ** head, char * name);
-void exportFile(FILE *file);
+void exportFile(FILE *file, char * filename);
 void traverseDir(char *name);
 
 #endif

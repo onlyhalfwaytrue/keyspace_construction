@@ -14,6 +14,7 @@
 #include "traverse.c"
 
 void finalList(){
+	if (inverted_index== NULL || filelist==NULL){return;}
 	node_t * temp;
 	file_t * file;
 	int i;
@@ -65,9 +66,9 @@ void finalList(){
 	}
 }
 int is_regular_file(const char *path){
-    struct stat path_stat;
-    stat(path, &path_stat);
-    return S_ISREG(path_stat.st_mode);
+	struct stat path_stat;
+	stat(path, &path_stat);
+	return S_ISREG(path_stat.st_mode);
 }
 
 void makeOutput(char * outputfile){
@@ -75,6 +76,9 @@ void makeOutput(char * outputfile){
 	output=freopen(outputfile, "w", stdout);
 	printf("%s\n", "<? xml version=\"1.0\" encoding=\"UTF-8\"?>");
 	printf("%s\n", "<fileIndex>");
+	if (inverted_index== NULL || filelist==NULL){
+		return;
+	}
 	node_t * temp=inverted_index->head;
 	out_t * tOut;
 	while(temp!=NULL){
@@ -108,17 +112,23 @@ int main(int argc, char *argv[]){
 				newfile->filename=argv[2];
 				newfile->next=NULL;
 				filelist=newfile;
-				exportFile(p);
+				exportFile(p, newfile->filename);
 			}
 		}
 		else{
+//			printf("Started traverseDir\n");
 			traverseDir(argv[2]);
+//			printf("Completed first traverseDir\n");
 			haveNum=1;
 			traverseDir(argv[2]);
-			printf("Completed second traverseDir\n");
+//			printf("Completed second traverseDir\n");
 		}
+		
 	}
-	finalList();
+	if (inverted_index== NULL || filelist==NULL){}
+	else{
+		finalList();
+	}
 	makeOutput(argv[1]);
 	free(filelist);
 	free(inverted_index);

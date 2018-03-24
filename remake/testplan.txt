@@ -1,0 +1,13 @@
+The test plan here is embodied in the numerous directories here and the file “singletestfile.txt”. The names of the test materials are descriptive regarding what they test.
+
+The directory “empty” is an empty directory used to make sure the program will create an xml consistent with an empty directory (no entries) and will not crash when it doesn’t encounter any files with content in them.
+
+The directory “singleemptyfile” contains a single file with nothing in it. This tests whether or not we get output consistent with nothing more than an empty file.
+
+The directory “singlefile” contains a subdirectory with a subdirectory with a single file inside of it. This tests whether or not we get output consistent with a single file while having a number of directories with no text content in them.
+
+The directory “song_lyrics” contains no files itself but has two subdirectories with files in them. This is to test similar functionality to the previous one but makes sure lateral traversals occur as well.
+
+The directory  “testDirectory” has 3 levels of directories within directories, each having content in them. This tests general functionality with many files. 
+
+The directory “triple_files” has four files in it which are copied into its one subdirectory and a subdirectory within that subdirectory. This makes sure that multiple entries for the same filename are not printed in the xml, but rather all of the counts are totaled up. Some of the copied files also have extra content in them in the lowest level of the subdirectory to ensure that the extra information is recorded reliably as well.

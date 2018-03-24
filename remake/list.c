@@ -72,10 +72,11 @@ relation comes_first(char * new_word, char * old_word){
 void insert_node(list_t * list, char * wordd, int update_index){
 	//	Inserts nodes into our linked list structure but in the proper, sorted order using the
 	//	comes_first comparison function to find the word's relative position in the list.
+	//printf("FIRST\n");
 	node_t * new_word = new_node(wordd);
+	//printf("SECOND\n");
 	new_word->count[update_index]++;
-	//new_word->count[update_index]++;
-//	printf("First check %d\n", new_word->count[1]);
+	//printf("WORD: %s\n", new_word->word);
 	if(list->head==NULL){
 		//printf("%d\n", new_word->count[1]);
 		list->head=new_word;
@@ -98,7 +99,7 @@ void insert_node(list_t * list, char * wordd, int update_index){
 		if(comes_first(new_word->word, current->word) == BEFORE){
 			//printf("\n placed %s BEFORE %s\n", new_word->word, current->word);
 			if (current->prev == NULL){
-				//printf("inserted new head: %s\n", new_word->word);
+				printf("inserted new head: %s\n", new_word->word);
 				new_word->next = current;
 				current->prev = new_word;
 				new_word->prev = NULL;
@@ -114,6 +115,14 @@ void insert_node(list_t * list, char * wordd, int update_index){
 		current = current->next;
 	}
 	if(comes_first(new_word->word, current->word) == BEFORE){//before tail
+		if (current->prev == NULL){//before head
+			//printf("inserted new head: %s\n", new_word->word);
+			new_word->next = current;
+			current->prev = new_word;
+			new_word->prev = NULL;
+			list->head = new_word;
+			return;
+		}
 		new_word->prev = current->prev;
 		current->prev->next = new_word;
 		new_word->next = current;
@@ -135,7 +144,9 @@ void sort_list (char ** word_array, int update_index){
 	}
 	int position = 0;
 	while(word_array[position]!=0){
-//		printf("list %s index %d\n", word_array[position], update_index);
+		//printf("If you don't see the next, it is word_array [position]\n");
+		//printf("list %s index %d\n", word_array[position], update_index);
+		//printf("If you see this, it isn't word_array [position]\n");
 		insert_node(inverted_index, word_array[position], update_index);
 		position++;
 	}
@@ -144,7 +155,7 @@ void sort_list (char ** word_array, int update_index){
 void print_list(list_t * sorted, file_t * theList){
 	//	Prints input linked list. The list is sorted by the time this function is called,
 	//	this completes our program.
-	printf("PRINTLIST CALL");
+//	printf("PRINTLIST CALL");
 	node_t * temp;
 	file_t * file = theList;
 	int i;

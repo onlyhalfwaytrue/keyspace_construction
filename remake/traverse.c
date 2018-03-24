@@ -27,6 +27,16 @@ char* makePath(char* s1, char* s2){
 	return temp;
 }
 
+int earliest_seqnum(char * file){//if the filename already exists, we give the earliest seqnum
+	file_t * temp;
+	for(temp=filelist; temp!=NULL; temp=temp->next){
+		if(strcmp(file, temp->filename)==0){
+			return temp->seqnum;
+		}
+	}
+	return numFiles;
+}
+
 //inserts new file nodes for the global file list variable;
 /*void insert_file(file_t ** head, char * name){
 	file_t *newNode=(file_t*)malloc(sizeof(file_t));
@@ -52,12 +62,13 @@ char* makePath(char* s1, char* s2){
 }*/
 //function to take entire content of file, whitespaces and all, and put it into an array
 //to be parsed
-void exportFile(FILE *file){
+void exportFile(FILE *file, char * filename){
 	//printf("In export..\n");
 	if (file==NULL){
 		printf("Subdirectory... continuing\n");
 		return;
 	}
+	printf("EXPORTING FILE %d\n", globalIndex);
 	char *source = NULL;
 	if (file != NULL){
 		if(fseek(file, 0L, SEEK_END)==0){
@@ -83,7 +94,7 @@ void exportFile(FILE *file){
 	//printf("EXPORTED FILE %d\n", globalIndex);
 	char ** split_words = separate_string(source);
 	//printf("NOT STUCK 1\n");
-	sort_list(split_words, globalIndex);
+	sort_list(split_words, earliest_seqnum(filename));
 	//printf("NOT STUCK 2\n");
 	print_list(inverted_index, filelist);
 	//printf("NOT STUCK 3\n");
@@ -110,10 +121,11 @@ void traverseDir(char *name){
 		else{
 			//file to be opened or counted
 			if(haveNum==0){
-				//printf("Inserting %s to filelist\n", entry->d_name);
+				printf("Inserting %s to filelist\n", entry->d_name);
 				//insert_file(&filelist, entry->d_name);
 				file_t * newfile=malloc(sizeof(file_t));
 				newfile->filename=entry->d_name;
+				newfile->seqnum = earliest_seqnum(newfile->filename);
 				newfile->next=NULL;
 				if(filelist==NULL){
 					filelist=newfile;
@@ -142,11 +154,11 @@ void traverseDir(char *name){
 				}
 				FILE *fp=NULL;
 				char* filePath=makePath(name, entry->d_name);
-				//printf("The file path is %s\n", filePath);
+				printf("The file path is %s\n", filePath);
 				fp=fopen(filePath, "r");
-				//printf("Exporting %s...\n", entry->d_name);
-				//printf("%d\n", globalIndex);
-				exportFile(fp);
+				printf("Exporting %s...\n", entry->d_name);
+//				printf("%d\n", globalIndex);
+				exportFile(fp, entry->d_name);
 				globalIndex++;
 			}
 		}

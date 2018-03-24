@@ -1,12 +1,10 @@
 Okay this is the final version, there are just a few slight issues that shouldnt take long to form solutions for
-1) if a token occurs in multiple files of the same name you only print the file once with all the counts added up.
-See project assignment for further explanation but if token "aa" occurs 1 in path1/abc.txt and 2 in path2/abc.txt
-then the output should be abc.txt 3.  All the code for this occurs in invertedIndexer.c
+1)RESOLVED:- MULTIPLE FILES WITH SAME NAME NOW PRINT AS THE SAME NAME WITH COUNTS SUMMED UP
 
 2) if our program reads in only one file, I implemented functionality for this but the filename is being stored as
 a whole path, you can view this in the invertedIndexer.c source code.  This should also be a simple fix that would
 be something along the lines of parsing the path to just get the filename.  The current code still works its just
-the output will output the entire path instead of just the file
+the output will output the entire path instead of just the file :- WAS NOT ABLE TO REPLICATE
 
 3) We need a readme.pdf to describe the functionality.  As it stands, we first build a file list, then we build a token
 list that holds an int array of the same size as the file list.  This int array holds the counts that the token occurs
@@ -15,7 +13,3 @@ list with an added field in each token node to point to another list that contai
 and the count.  This list is built in the invertedIndexer.c file and it is built in proper order with the counts being
 ordered from highest to lowest.  Finally we make our output file according to the proper format outlined in the assignment
 description.
-
-4) We need a makefile
-
-We compile the program with gcc -g -Wall invertedIndex.c -o invertedIndex
